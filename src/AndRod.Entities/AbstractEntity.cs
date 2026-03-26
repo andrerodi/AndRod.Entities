@@ -70,4 +70,11 @@ public abstract class AbstractEntity<TSelf, TId> :
     /// Returns the hash code of the entity's ID.
     /// </summary>
     public override int GetHashCode() => Id.GetHashCode();
+
+    /// <summary>
+    /// Returns a string representation of the entity in the format "<see cref="TSelf"/>: <see cref="Id"/>".
+    /// </summary>
+    public override string ToString() => $"{typeof(TSelf).Name}: {Id} - Created: {CreatedAt} - Updated: {FormatDateTime(UpdatedAt)}";
+
+    private static string FormatDateTime(DateTimeOffset? dateTime) => dateTime.HasValue ? dateTime.Value.ToString() : "N/A";
 }
