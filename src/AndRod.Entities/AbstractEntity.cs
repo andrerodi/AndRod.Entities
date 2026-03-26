@@ -16,11 +16,16 @@ public abstract class AbstractEntity<TSelf, TId> :
     where TSelf : AbstractEntity<TSelf, TId>
     where TId : IStronglyTypedId, IComparable<TId>
 {
-    protected AbstractEntity() { }
+    protected AbstractEntity()
+    {
+        CreatedAt = DateTimeOffset.UtcNow;
+    }
 
-    protected AbstractEntity(TId id)
+    protected AbstractEntity(TId id, DateTimeOffset createdAt, DateTimeOffset? updatedAt = null)
     {
         Id = id;
+        CreatedAt = createdAt;
+        UpdatedAt = updatedAt;
     }
 
     /// <summary>
@@ -31,7 +36,7 @@ public abstract class AbstractEntity<TSelf, TId> :
     /// <summary>
     /// Gets the date and time the entity was created.
     /// </summary>
-    public DateTimeOffset CreatedAt { get; private set; } = DateTimeOffset.UtcNow;
+    public DateTimeOffset CreatedAt { get; private set; }
 
     /// <summary>
     /// Gets the date and time the entity was last updated.
