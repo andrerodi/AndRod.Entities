@@ -11,10 +11,7 @@ public sealed class TestAbstractEntityClass
     public static void ClassInitialize(TestContext context)
     {
         IServiceCollection services = new ServiceCollection();
-        services.AddStronglyTypedIds(config =>
-        {
-            config.Add<SomeEntityId>();
-        });
+        services.AddStronglyTypedIds(config => config.Add<SomeEntityId>());
     }
 
     [TestMethod]
