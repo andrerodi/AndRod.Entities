@@ -1,10 +1,11 @@
 ﻿using AndRod.StronglyTypedIds;
+
 using Microsoft.Extensions.DependencyInjection;
 
 namespace AndRod.Entities.Test;
 
 [TestClass]
-public sealed class Test1
+public sealed class TestAbstractEntityClass
 {
     [ClassInitialize]
     public static void ClassInitialize(TestContext context)
@@ -99,5 +100,32 @@ public sealed class Test1
         Assert.IsTrue(entity.UpdatedAt.HasValue);
         Assert.AreNotEqual(createdAt, entity.UpdatedAt);
         Assert.AreNotEqual(updatedAt, entity.UpdatedAt);
+    }
+
+    [TestMethod]
+    public void Create_SomeEntity_With_Id_And_Check_With_Another_Entity_With_Same_Id_Should_BeEqual()
+    {
+        var value = Guid.NewGuid();
+        var id1 = new SomeEntityId(value);
+        var id2 = new SomeEntityId(value);
+
+        var entity1 = new SomeEntity(id1, DateTimeOffset.Now);
+        var entity2 = new SomeEntity(id2, DateTimeOffset.Now);
+
+        Assert.AreEqual(entity1, entity2);
+    }
+
+    [TestMethod]
+    public void Create_SomeEntity_With_Id_And_Check_WithAnother_Entity_With_Another_Id_Should_NotBeEqual()
+    {
+        var value1 = Guid.NewGuid();
+        var id1 = new SomeEntityId(value1);
+        var value2 = Guid.NewGuid();
+        var id2 = new SomeEntityId(value2);
+
+        var entity1 = new SomeEntity(id1, DateTimeOffset.Now);
+        var entity2 = new SomeEntity(id2, DateTimeOffset.Now);
+
+        Assert.AreNotEqual(entity1, entity2);
     }
 }

@@ -1,2 +1,10 @@
 <Solution>
+  <Folder Name="/src/">
+    <Project Path="src/AndRod.Entities/AndRod.Entities.csproj" />
+  </Folder>
+  <Folder Name="/test/">
+    <Project Path="test/AndRod.Entities.Test/AndRod.Entities.Test.csproj" />
+  </Folder>
+  <Project Path="../AndRod.Core/src/AndRod.Core/AndRod.Core.csproj" />
+  <Project Path="../AndRod.StronglyTypedIds/src/AndRod.StronglyTypedIds/AndRod.StronglyTypedIds.csproj" />
 </Solution>
