@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace AndRod.Entities.Test;
 
 [TestClass]
-public sealed class TestAbstractEntityClass
+public sealed class TestEntityClass
 {
     [ClassInitialize]
     public static void ClassInitialize(TestContext context)
