@@ -15,49 +15,34 @@ public sealed class TestHistoricalEntityClass
     }
 
     [TestMethod]
-    public void Create_Empty_SomeHistoricalEntity_Should_Create_With_Current_Time()
+    public void Create_HistoricalEntity_ShouldInitializeHistory()
     {
-        var dateTime = DateTimeOffset.Now;
+        // Arrange
+        var entity = new SomeHistoricalEntity();
 
-        var entity = new SomeHistoricalEntity(SomeHistoricalEntityId.Empty(), dateTime);
+        // Act
+        var history = entity.History;
 
-        Assert.AreEqual(Guid.Empty, entity.Id.Value);
-        Assert.AreEqual(dateTime, entity.CreatedAt);
-        Assert.IsFalse(entity.UpdatedAt.HasValue);
+        // Assert
+        Assert.IsNotNull(history);
+        Assert.IsEmpty(history.History);
     }
 
     [TestMethod]
-    public void Create_SomeHistoricalEntity_With_Id_Should_Create_With_Given_Id()
+    public void Create_HistoricalEntity_AddRecord_ShouldAddHistoricalRecord()
     {
-        var value = Guid.NewGuid();
-        var id = new SomeHistoricalEntityId(value);
-        var dateTime = DateTimeOffset.Now;
+        // Arrange
+        var entity = new SomeHistoricalEntity();
 
-        var entity = new SomeHistoricalEntity(id, dateTime);
+        // Act
+        entity.History.AddRecord("Name", "Old Name", "New Name");
 
-        Assert.AreEqual(id, entity.Id);
-        Assert.AreEqual(dateTime, entity.CreatedAt);
-        Assert.IsFalse(entity.UpdatedAt.HasValue);
-    }
-
-    [TestMethod]
-    public void Update_SomeHistoricalEntity_Should_Update_UpdatedAt()
-    {
-        var value = Guid.NewGuid();
-        var dateTime = DateTimeOffset.Now;
-        var entity = new SomeHistoricalEntity(new SomeHistoricalEntityId(value), dateTime);
-        var updatedAtBefore = entity.UpdatedAt;
-
-        entity.UpdateTimestamp();
-        var history = entity.History.ToArray();
-        var historicalRecord = history[0] as HistoricalRecord<DateTimeOffset?>;
-
-        Assert.IsTrue(entity.UpdatedAt.HasValue);
-        Assert.AreNotEqual(dateTime, entity.UpdatedAt.Value);
-        Assert.HasCount(1, history);
-        Assert.IsInstanceOfType<HistoricalRecord<DateTimeOffset?>>(historicalRecord);
-        Assert.AreEqual(nameof(SomeHistoricalEntity.UpdatedAt), historicalRecord.PropertyName);
-        Assert.AreEqual(updatedAtBefore, historicalRecord.OldValue);
-        Assert.AreEqual(entity.UpdatedAt, historicalRecord.NewValue);
+        // Assert
+        Assert.IsNotEmpty(entity.History.History);
+        Assert.HasCount(1, entity.History.History);
+        var record = entity.History.History.First();
+        Assert.AreEqual("Name", record.PropertyName);
+        Assert.AreEqual("Old Name", ((HistoricalRecord<string>)record).OldValue);
+        Assert.AreEqual("New Name", ((HistoricalRecord<string>)record).NewValue);
     }
 }

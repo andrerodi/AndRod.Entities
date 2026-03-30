@@ -22,7 +22,7 @@ public sealed class SomeEntity : Entity<SomeEntity, SomeEntityId>
 /// SOME HISTORICAL ENTITY
 public sealed record SomeHistoricalEntityId(Guid Value) : StronglyTypedId<SomeHistoricalEntityId, Guid>(Value);
 
-public sealed class SomeHistoricalEntity : HistoricalEntity<SomeHistoricalEntity, SomeHistoricalEntityId>
+public sealed class SomeHistoricalEntity : Entity<SomeHistoricalEntity, SomeHistoricalEntityId>, IHistoricalEntity
 {
     public SomeHistoricalEntity()
     {
@@ -33,11 +33,12 @@ public sealed class SomeHistoricalEntity : HistoricalEntity<SomeHistoricalEntity
     {
     }
 
+    public HistoryicalRecordCollection History { get; } = HistoryicalRecordCollection.Create();
+
     public void UpdateTimestamp()
     {
-        var old = UpdatedAt;
-        Update();
-        AddHistoricalRecord(nameof(UpdatedAt), old, UpdatedAt);
+        var previousUpdatedAt = Update();
+        History.AddRecord(nameof(UpdatedAt), previousUpdatedAt, UpdatedAt);
     }
 
     public override SomeHistoricalEntity Clone() => new(Id, CreatedAt, UpdatedAt);

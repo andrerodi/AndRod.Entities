@@ -40,7 +40,12 @@ public abstract class Entity<TSelf, TId> : IEntity<TSelf, TId>, ITypedCloneable<
     public DateTimeOffset? UpdatedAt { get; private set; }
 
     /// <inheritdoc />
-    public void Update() => UpdatedAt = DateTimeOffset.UtcNow;
+    public DateTimeOffset? Update()
+    {
+        var old = UpdatedAt;
+        UpdatedAt = DateTimeOffset.UtcNow;
+        return old;
+    }
 
     /// <summary>
     /// Compares the entity's ID to another entity's ID.
@@ -105,7 +110,7 @@ public interface IEntity
     DateTimeOffset? UpdatedAt { get; }
 
     /// <summary>
-    /// Updates the entity's <see cref="UpdatedAt"/> timestamp.
+    /// Updates the entity's <see cref="UpdatedAt"/> timestamp. Returns the previous value of <see cref="UpdatedAt"/> before the update.
     /// </summary>
-    public void Update();
+    public DateTimeOffset? Update();
 }

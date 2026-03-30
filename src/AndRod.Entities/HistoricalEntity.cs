@@ -1,34 +1,22 @@
-﻿using AndRod.StronglyTypedIds;
-
-namespace AndRod.Entities;
+﻿namespace AndRod.Entities;
 
 /// <summary>
-/// Represents an entity that maintains a history of changes made to its properties. This abstract class extends the base Entity class and introduces a mechanism to track changes over time. Each change is recorded as a historical record, which includes the property name, old value, new value, and the timestamp of when the change occurred. This allows for auditing and tracking the evolution of the entity's state throughout its lifecycle.
+/// This contract defines the structure for a historical entity, which is an entity that maintains a collection of historical records capturing changes made to the entity over time. This allows for tracking and auditing of modifications, providing a comprehensive history of changes for the entity.
 /// </summary>
-public abstract class HistoricalEntity<TSelf, TId> : Entity<TSelf, TId>
-    where TSelf : HistoricalEntity<TSelf, TId>
-    where TId : IStronglyTypedId, IComparable<TId>
+public interface IHistoricalEntity
 {
     /// <summary>
-    /// Creates a new instance of the <see cref="HistoricalEntity{TSelf, TId}"/> class with a default identifier and the current utc date and time as the creation timestamp.
+    /// A collection of historical records that capture changes made to the entity over time. This property allows for tracking and auditing of modifications, providing a comprehensive history of changes for the entity.
     /// </summary>
-    protected HistoricalEntity() : base()
-    {
-    }
+    HistoryicalRecordCollection History { get; }
+}
 
-    /// <summary>
-    /// Creates a new instance of the <see cref="HistoricalEntity{TSelf, TId}"/> class with the specified identifier and the current utc date and time as the creation timestamp.
-    /// </summary>
-    protected HistoricalEntity(TId id) : base(id, DateTimeOffset.UtcNow)
-    {
-    }
-
-    /// <summary>
-    /// Creates a new instance of the <see cref="HistoricalEntity{TSelf, TId}"/> class with the specified identifier, creation timestamp, and optional update timestamp.
-    /// </summary>
-    protected HistoricalEntity(TId id, DateTimeOffset createdAt, DateTimeOffset? updatedAt = null) : base(id, createdAt, updatedAt)
-    {
-    }
+/// <summary>
+/// This class represents a collection of historical records for an entity.
+/// </summary>
+public sealed class HistoryicalRecordCollection
+{
+    private HistoryicalRecordCollection() { }
 
     private readonly List<IHistoricalRecord> _history = [];
 
@@ -36,27 +24,13 @@ public abstract class HistoricalEntity<TSelf, TId> : Entity<TSelf, TId>
     public IReadOnlyList<IHistoricalRecord> History => _history;
 
     /// <inheritdoc />
-    public void AddHistoricalRecord<T>(string propertyName, T? oldValue, T? newValue)
+    public void AddRecord<T>(string propertyName, T? oldValue, T? newValue)
     {
         var record = new HistoricalRecord<T>(propertyName, oldValue, newValue);
         _history.Add(record);
     }
-}
 
-/// <summary>
-/// Represents the contract for an entity that maintains a history of changes made to its properties. This interface defines the structure for tracking changes over time, allowing entities to record historical records that capture the property name, old value, new value, and the timestamp of when the change occurred.
-/// </summary>
-public interface IHistoricalEntity
-{
-    /// <summary>
-    /// Holds the history of changes made to the entity. Each record in the history represents a change to a specific property, including the old and new values, as well as the timestamp of when the change occurred.
-    /// <summary>
-    public IReadOnlyList<IHistoricalRecord> History { get; }
-
-    /// <summary>
-    /// Adds a historical record to the entity's history. This method is typically called when a property of the entity is changed, allowing the change to be tracked over time. The method takes the name of the property that was changed, the old value before the change, and the new value after the change. It creates a new historical record and adds it to the history list.
-    /// </summary>
-    void AddHistoricalRecord<T>(string propertyName, T? oldValue, T? newValue);
+    public static HistoryicalRecordCollection Create() => new();
 }
 
 /// <summary>
