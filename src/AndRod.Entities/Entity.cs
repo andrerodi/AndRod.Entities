@@ -34,6 +34,9 @@ public abstract class Entity<TSelf, TId> : IEntity<TSelf, TId>, ITypedCloneable<
     public TId Id { get; private set; } = StronglyTypedIdFactory.Empty<TId>();
 
     /// <inheritdoc/>
+    IStronglyTypedId IEntity.Id => Id;
+
+    /// <inheritdoc/>
     public DateTimeOffset CreatedAt { get; private set; }
 
     /// <inheritdoc/>
@@ -91,7 +94,7 @@ public interface IEntity<TSelf, TKey> : IEntity
     /// <summary>
     /// Gets the unique identifier of the entity.
     /// </summary>
-    TKey Id { get; }
+    new TKey Id { get; }
 }
 
 /// <summary>
@@ -99,6 +102,11 @@ public interface IEntity<TSelf, TKey> : IEntity
 /// </summary>
 public interface IEntity
 {
+    /// <summary>
+    /// Gets the unique identifier of the entity.
+    /// </summary>
+    IStronglyTypedId Id { get; }
+
     /// <summary>
     /// Gets the timestamp when the entity was created.
     /// </summary>
